@@ -1,15 +1,48 @@
-def generar_particulas(segmentos, tipo=1, h=0.01):
-    """Convierte una lista de arrays de puntos en estructuras de partículas"""
-    particulas = []
-    id_counter = 0
-    for segmento in segmentos:
-        for p in segmento:
-            particulas.append({
-                "id": id_counter,
-                "type": tipo,
-                "position": [float(p[0]), float(p[1])],
-                "velocity": [0.0, 0.0],
-                "h": h
-            })
-            id_counter += 1
-    return particulas
+# boundaries/particleizer.py
+
+from typing import List, Dict, Any, Tuple
+
+Point = Tuple[float, float]
+Segment = List[Point]
+
+class BoundaryParticleizer:
+    def __init__(self):
+        # Podrías parametrizar aquí settings globales si los necesitas
+        pass
+
+    def generate(self,
+                 segments: List[Segment],
+                 ptype: int = 1,
+                 h: float = 0.01) -> List[Dict[str, Any]]:
+        """
+        Convierte lista de segmentos (líneas de frontera) en partículas SPH.
+
+        Args:
+            segments: Cada segmento es una lista de puntos (x, y).
+            ptype: entero que identifica el tipo de partículas.
+            h: radio de suavizado.
+
+        Returns:
+            List[Dict]: cada dict contiene keys: id, type, position, velocity, h
+        """
+        particles: List[Dict[str, Any]] = []
+        seen: set[Tuple[float, float]] = set()
+        id_counter = 0
+
+        for seg in segments:
+            for x, y in seg:
+                key = (round(x, 8), round(y, 8))  # Precisión configurable
+                if key in seen:
+                    continue
+                seen.add(key)
+                particles.append({
+                    "id": id_counter,
+                    "type": ptype,
+                    "position": [x, y],
+                    "velocity": [0.0, 0.0],
+                    "h": h
+                })
+                id_counter += 1
+
+        return particles
+

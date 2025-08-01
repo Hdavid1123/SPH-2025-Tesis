@@ -34,3 +34,48 @@ from data.visualizer import visualizar_borde_y_fluido
 graficar_geometria()
 graficar_fluido()
 visualizar_borde_y_fluido()
+
+# Corrección a 31 de Julio
+
+🏗️ Módulos Principales
+domains
+
+    base.py:
+    Define la interfaz Domain2D (métodos segments() y vertices()).
+
+    utils.py:
+    Funciones de bajo nivel para construir y muestrear geometrías (segmentar lados, crear trapecios, agujeros, líneas).
+
+    quadrilateral.py:
+    Clase Quadrilateral que implementa Domain2D, incorpora normalización, agujeros y líneas extra.
+
+boundaries
+
+    builder.py:
+    Clase BoundaryBuilder, que lee boundary_conditions.json, construye el Quadrilateral, aplica agujeros/ líneas extra y genera partículas.
+
+    particleizer.py:
+    Clase BoundaryParticleizer que asigna IDs, posiciones y radios de suavizado a cada punto de frontera.
+
+    visualizer.py:
+    Función visualize_boundary(segments, ...) para trazar la frontera con matplotlib.
+
+fluid
+
+    builder.py:
+    Clase FluidBuilder, que lee fluid_region.json y genera la malla de fluido.
+
+    particleizer.py:
+    Clase FluidParticleizer para convertir la región interior en partículas SPH.
+
+    visualizer.py:
+    Función visualize_fluid(positions, ...) para trazar la distribución de partículas de fluido.
+
+data
+
+    visualizer.py:
+    Función visualize_combined(boundary_particles, fluid_particles, ...) para ver ambas colecciones en un solo gráfico.
+
+Ejecutar archivo de tests/test_boundaries.py:
+PYTHONPATH=. pytest tests/test_boundaries.py --disable-warnings
+

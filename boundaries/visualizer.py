@@ -1,40 +1,45 @@
 import matplotlib.pyplot as plt
-from boundaries.geometry_build import construir_geometria_desde_parametros
-import numpy as np
+from typing import List, Tuple
 
-def graficar_geometria(point_size=1.5, figsize=(6, 6)):
-    lados, lineas_extra = construir_geometria_desde_parametros()
+Point = Tuple[float, float]
+Segment = List[Point]
 
-    colores_lados = {
-        "AB": "r",
-        "BC": "g",
-        "CD": "b",
-        "DA": "m"
-    }
 
-    plt.figure(figsize=figsize)
+def visualize_boundary(particles: List[dict],
+                       show: bool = True,
+                       save_path: str = None,
+                       ax: plt.Axes = None) -> plt.Axes:
+    """
+    Dibuja la nube de partículas SPH como representación de la frontera.
 
-    puntos_borde = []
+    Args:
+        particles: lista de partículas, cada una con campos incluyendo 'position'.
+        show: si True muestra el plot al final (plt.show()).
+        save_path: si se especifica, guarda la imagen en esa ruta.
+        ax: eje existente donde dibujar (opcional).
 
-    # Dibujar lados del trapecio
-    for nombre_lado, puntos in lados.items():
-        x, y = puntos[:, 0], puntos[:, 1]
-        color = colores_lados.get(nombre_lado, "k")
-        plt.scatter(x, y, c=color, label=f"Lado {nombre_lado}", s=point_size)
-        puntos_borde.extend(puntos)  # Recolectar puntos del lado
+    Returns:
+        plt.Axes: el eje donde se dibujó.
+    """
+    own_ax = ax is None
+    if own_ax:
+        fig, ax = plt.subplots()
 
-    # Dibujar líneas adicionales
-    for i, linea in enumerate(lineas_extra):
-        x, y = linea[:, 0], linea[:, 1]
-        plt.scatter(x, y, c='k', marker="x", label=f"Línea extra {i+1}", s=point_size)
-        puntos_borde.extend(linea)  # Recolectar puntos de la línea
+    # Extraer coordenadas x, y
+    xs = [p["position"][0] for p in particles]
+    ys = [p["position"][1] for p in particles]
 
-    plt.gca().set_aspect('equal')
-    plt.grid(True)
-    plt.title("Geometría generada")
-    plt.legend()
-    plt.xlim(-0.6, 0.6)
-    plt.ylim(-0.6, 0.6)
-    plt.show()
+    # Dibujar partículas como puntos
+    ax.plot(xs, ys, 'ko', markersize=2)
 
-    return np.array(puntos_borde)
+    ax.set_aspect('equal', 'box')
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_title('Frontera SPH')
+
+    if save_path:
+        plt.savefig(save_path, dpi=150)
+    elif show and own_ax:
+        plt.show()
+
+    return ax
