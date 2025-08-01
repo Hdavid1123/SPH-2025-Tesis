@@ -79,3 +79,5 @@ data
 Ejecutar archivo de tests/test_boundaries.py:
 PYTHONPATH=. pytest tests/test_boundaries.py --disable-warnings
 
+## El visualizer de boundaries grafica a partir de las partículas generadas en SPH y el de fluid a partir de la estructura de puntos.
+

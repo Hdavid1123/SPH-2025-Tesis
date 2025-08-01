@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.12)
+project(particleizer_cpp)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+find_package(pybind11 REQUIRED)
+
+# Módulo nativo Python “particleizer_cpp”
+pybind11_add_module(particleizer_cpp
+    bindings.cpp
+    particleizer.cpp
+)
+
+# Incluir headers en este directorio
+target_include_directories(particleizer_cpp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
