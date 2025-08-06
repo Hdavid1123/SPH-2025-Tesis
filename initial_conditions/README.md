@@ -114,7 +114,7 @@ La resolución **no se pasa manualmente**, sino que se lee directamente desde es
 
 ## ✅ Requisitos
 
-- Python ≥ 3.9
+- Python ≥ 3.10
 - Paquetes: `matplotlib`
 
 Instalar con:
