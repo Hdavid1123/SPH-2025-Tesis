@@ -1,83 +1,134 @@
-# SPH-2025-InitialTests
+# 🧊 Proyecto SPH: Condiciones Iniciales
 
-Este proyecto genera condiciones iniciales para simulaciones con el método de partículas SPH (Smoothed Particle Hydrodynamics). Está enfocado en construir:
-
-- **Geometría de frontera** (trapecios personalizables con agujeros y líneas adicionales)
-- **Región fluida** (relleno parcial o total dentro de una región arbitraria)
-- **Visualización combinada** para verificar configuraciones iniciales
-- **Filtrado automático** de solapamientos entre partículas de frontera y fluido
+Este módulo forma parte de un proyecto SPH (Smoothed Particle Hydrodynamics) y permite generar, exportar y visualizar **condiciones iniciales** para la simulación. Actualmente, incluye funcionalidades para trabajar con **partículas de frontera**.
 
 ---
 
-## 📦 Estructura del Proyecto
+## 📁 Estructura relevante del proyecto
 
-La estructura del proyecto se encuentra documentada en el archivo [`structure.txt`](structure.txt), que refleja la organización modular del código en carpetas temáticas:
-
-- `boundaries/` → Generación de la geometría de frontera  
-- `fluid/` → Generación de la región fluida  
-- `data/` → Visualización combinada de frontera + fluido  
-- `main.py` → Punto de entrada para pruebas  
-- `README.md` → Este archivo  
-- `structure.txt` → Muestra visual del árbol de directorios  
+```
+initial_conditions/
+├── main.py                    # Punto de entrada principal
+├── boundaries/
+│   ├── builder.py             # Construye partículas a partir de geometrías
+│   ├── export.py              # Exporta las partículas a un archivo de texto
+│   ├── visualizer.py          # Visualiza partículas SPH
+├── outputs/                   # Carpeta donde se guardan archivos generados
+├── parameters/
+│   ├── boundary_conditions.json  # Archivo con parámetros geométricos
+```
 
 ---
 
-## 🚀 Uso Básico
+## ▶️ Ejecución del sistema
 
-Puedes importar y ejecutar las funciones de visualización desde `main.py`:
+### Comando básico
 
-```python
-from boundaries.visualizer import graficar_geometria
-from fluid.visualizer import graficar_fluido
-from data.visualizer import visualizar_borde_y_fluido
+```bash
+python initial_conditions/main.py export_boundaries
+```
 
-graficar_geometria()
-graficar_fluido()
-visualizar_borde_y_fluido()
+Este comando hace lo siguiente:
 
-# Corrección a 31 de Julio
+- Genera partículas SPH a partir de la geometría definida en `parameters/boundary_conditions.json`.
+- Las guarda en el archivo por defecto `outputs/boundary_particles.txt`.
 
-🏗️ Módulos Principales
-domains
+---
 
-    base.py:
-    Define la interfaz Domain2D (métodos segments() y vertices()).
+## ⚙️ Argumentos disponibles
 
-    utils.py:
-    Funciones de bajo nivel para construir y muestrear geometrías (segmentar lados, crear trapecios, agujeros, líneas).
+Puedes personalizar el comportamiento con los siguientes flags:
 
-    quadrilateral.py:
-    Clase Quadrilateral que implementa Domain2D, incorpora normalización, agujeros y líneas extra.
+| Opción               | Tipo     | Descripción                                                                 |
+|----------------------|----------|-----------------------------------------------------------------------------|
+| `export_boundaries`  | comando  | Exporta las partículas de frontera en un archivo `.txt`.                    |
+| `--output NOMBRE`    | opcional | Define el nombre del archivo de salida (dentro de `outputs/`).             |
+| `--plot`             | bandera  | Si se activa, se abre una visualización con `matplotlib`.                  |
 
-boundaries
+### 🧪 Ejemplos de uso
 
-    builder.py:
-    Clase BoundaryBuilder, que lee boundary_conditions.json, construye el Quadrilateral, aplica agujeros/ líneas extra y genera partículas.
+```bash
+# Exportar con nombre personalizado
+python initial_conditions/main.py export_boundaries --output frontera.txt
 
-    particleizer.py:
-    Clase BoundaryParticleizer que asigna IDs, posiciones y radios de suavizado a cada punto de frontera.
+# Exportar y visualizar
+python initial_conditions/main.py export_boundaries --plot
 
-    visualizer.py:
-    Función visualize_boundary(segments, ...) para trazar la frontera con matplotlib.
+# Exportar con nombre personalizado y visualizar
+python initial_conditions/main.py export_boundaries --output pared.txt --plot
+```
 
-fluid
+---
 
-    builder.py:
-    Clase FluidBuilder, que lee fluid_region.json y genera la malla de fluido.
+## 📄 Formato del archivo generado
 
-    particleizer.py:
-    Clase FluidParticleizer para convertir la región interior en partículas SPH.
+El archivo de salida (`.txt`) contiene una tabla de partículas con las siguientes columnas:
 
-    visualizer.py:
-    Función visualize_fluid(positions, ...) para trazar la distribución de partículas de fluido.
+```txt
+posx    posy    h       tipo
+0.1234  0.5678  0.01    1
+...
+```
 
-data
+- `posx`, `posy`: coordenadas de la partícula.
+- `h`: radio de suavizado.
+- `tipo`: tipo de partícula (por defecto, `1` para frontera).
 
-    visualizer.py:
-    Función visualize_combined(boundary_particles, fluid_particles, ...) para ver ambas colecciones en un solo gráfico.
+---
 
-Ejecutar archivo de tests/test_boundaries.py:
-PYTHONPATH=. pytest tests/test_boundaries.py --disable-warnings
+## 🖼️ Visualización
 
-## El visualizer de boundaries grafica a partir de las partículas generadas en SPH y el de fluid a partir de la estructura de puntos.
+La visualización se realiza usando `matplotlib`. Las partículas se dibujan como puntos negros (`'ko'`) dentro de una caja de **dimensión fija entre `-0.5` y `0.5`** en ambos ejes (x, y), para mantener consistencia visual.
 
+---
+
+## 📁 Parámetros de geometría
+
+Los datos geométricos y resolución están definidos en el archivo:
+
+```
+parameters/boundary_conditions.json
+```
+
+Ejemplo de contenido:
+
+```json
+{
+  "trapecio": {
+    "d1": 100,
+    "d2": 100,
+    "d3": 100,
+    "a1": -90,
+    "a2": 0,
+    "a3": 90,
+    "resolucion": 3
+  },
+  "agujeros": [...],
+  "lineas_extra": [...]
+}
+```
+
+La resolución **no se pasa manualmente**, sino que se lee directamente desde este archivo.
+
+---
+
+## ✅ Requisitos
+
+- Python ≥ 3.9
+- Paquetes: `matplotlib`
+
+Instalar con:
+
+```bash
+pip install matplotlib
+```
+
+---
+
+## 🗂️ Ubicación del archivo
+
+Este archivo `README.md` debe colocarse directamente en el directorio:
+
+```
+initial_conditions/README.md
+```

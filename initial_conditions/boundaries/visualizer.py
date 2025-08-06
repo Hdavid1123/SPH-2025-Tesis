@@ -25,12 +25,13 @@ def visualize_boundary(particles: List[dict],
     if own_ax:
         fig, ax = plt.subplots()
 
-    # Extraer coordenadas x, y
     xs = [p["position"][0] for p in particles]
     ys = [p["position"][1] for p in particles]
 
-    # Dibujar partículas como puntos
     ax.plot(xs, ys, 'ko', markersize=2)
+
+    #ax.set_xlim(-0.6, 0.6)
+    #ax.set_ylim(-0.6, 0.6)
 
     ax.set_aspect('equal', 'box')
     ax.set_xlabel('x')
@@ -42,4 +43,5 @@ def visualize_boundary(particles: List[dict],
     elif show and own_ax:
         plt.show()
 
+    return ax
     return ax

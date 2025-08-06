@@ -1,27 +1,30 @@
-SPH-2025-InitialTests/
+initial_conditions/
 ├── boundaries/
-│   ├── export.py
-│   ├── geometry_build.py
-│   ├── geometry_func.py
 │   ├── __init__.py
-│   ├── parameters/
-│   │   ├── boundary_conditions.json
-│   │   └── __init__.py
+│   ├── builder.py
+│   ├── export.py
 │   ├── particleizer.py
-│   └── visualizer.py
+│   ├── visualizer.py
 ├── data/
 │   ├── __init__.py
-│   └── visualizer.py
-├── fluid/
-│   ├── filter.py
-│   ├── geometry_const.py
-│   ├── geometry_fluid.py
+│   ├── visualizer.py
+├── domains/
 │   ├── __init__.py
-│   ├── parameters/
-│   │   ├── fluid_region.json
-│   │   └── __init__.py
+│   ├── base.py
+│   ├── quadrilateral.py
+│   ├── utils.py
+├── fluid/
+│   ├── __init__.py
+│   ├── builder.py
+│   ├── filter.py
+│   ├── geometry.py
 │   ├── particleizer.py
-│   └── visualizer.py
+│   ├── visualizer.py
+├── outputs/
+│   ├── __init__.py
+├── parameters/
+│   ├── boundary_conditions.json
+│   ├── fluid_region.json
 ├── main.py
 ├── README.md
 └── structure.txt
