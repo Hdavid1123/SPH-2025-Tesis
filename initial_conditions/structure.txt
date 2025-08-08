@@ -5,9 +5,6 @@ initial_conditions/
 │   ├── export.py
 │   ├── particleizer.py
 │   ├── visualizer.py
-├── data/
-│   ├── __init__.py
-│   ├── visualizer.py
 ├── domains/
 │   ├── __init__.py
 │   ├── base.py

@@ -4,8 +4,10 @@ from matplotlib.path import Path
 def sample_fluid_region(config: dict) -> np.ndarray:
     """Genera puntos dentro de un cuadrilátero definido por vértices."""
     v = config["vertices"]
-    vertices = [np.array(v["A"]), np.array(v["B"]),
-                np.array(v["C"]), np.array(v["D"])]
+    vertices = [np.array(v["inf-izq"]),
+                np.array(v["inf-der"]),
+                np.array(v["sup-der"]),
+                np.array(v["sup-izq"])]
 
     xs, ys = zip(*vertices)
     min_x, max_x = min(xs), max(xs)
