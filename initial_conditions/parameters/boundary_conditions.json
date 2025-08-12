@@ -13,6 +13,11 @@
       "lado": "CD",
       "tam": 10,
       "offset": 0
+    },
+    {
+      "lado": "DA",
+      "tam": 100,
+      "offset": 0
     }
   ],
   "lineas_extra": [
