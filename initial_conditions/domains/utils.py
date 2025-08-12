@@ -52,10 +52,6 @@ def agregar_agujero(P1, P2, longitud, offset, sc, k=1):
     print(f"Agujero en [{offset:.4f}, {offset + longitud:.4f}] (normalizado)")
     print(f"Puntos antes: {len(puntos)}; después: {len(filtrados)}")
 
-    if len(filtrados) < 2:
-        print("[⚠️ AVISO] Agujero elimina todos los puntos. Se conservan todos.")
-        return puntos
-
     return filtrados
 
 
