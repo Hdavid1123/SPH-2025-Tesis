@@ -1,27 +1,46 @@
-initial_conditions/
-├── boundaries/
-│   ├── __init__.py
+initial_conditions
+├── boundaries
 │   ├── builder.py
 │   ├── export.py
+│   ├── __init__.py
 │   ├── particleizer.py
-│   ├── visualizer.py
-├── domains/
-│   ├── __init__.py
+│   ├── __pycache__
+│   └── visualizer.py
+├── domains
 │   ├── base.py
-│   ├── quadrilateral.py
-│   ├── utils.py
-├── fluid/
 │   ├── __init__.py
+│   ├── __pycache__
+│   ├── quadrilateral.py
+│   └── utils.py
+├── fluid
 │   ├── builder.py
+│   ├── export.py
 │   ├── filter.py
 │   ├── geometry.py
-│   ├── particleizer.py
-│   ├── visualizer.py
-├── outputs/
 │   ├── __init__.py
-├── parameters/
+│   ├── particleizer.py
+│   ├── __pycache__
+│   └── visualizer.py
+├── __init__.py
+├── main.py
+├── outputs
+│   ├── all_particles.txt
+│   ├── boundary_particles.txt
+│   ├── fluid_particles.txt
+│   └── stats_fluid.txt
+├── parameters
 │   ├── boundary_conditions.json
 │   ├── fluid_region.json
-├── main.py
+│   └── __init__.py
+├── __pycache__
+│   ├── export_all.cpython-310.pyc
+│   ├── __init__.cpython-310.pyc
+│   ├── __init__.cpython-39.pyc
+│   └── main.cpython-310.pyc
 ├── README.md
-└── structure.txt
+├── structure.txt
+└── utils
+    ├── export_all.py
+    ├── __init__.py
+    ├── io.py
+    └── summary.py

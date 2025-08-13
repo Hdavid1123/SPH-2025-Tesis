@@ -1,4 +1,5 @@
-# boundaries/builder.py
+# initial_conditions/boundaries/builder.py
+
 import json
 from pathlib import Path
 from domains.quadrilateral import Quadrilateral
@@ -14,24 +15,20 @@ class BoundaryBuilder:
     def build(self,
               resolution: int = None,
               particle_type: int = 1,
-              h: float = 0.01) -> list[dict]:
+              h: float = 0.01) -> dict:
         """
-        Construye la geometría de frontera y genera la lista de partículas SPH.
-        
-        Args:
-            resolution: Factor de resolución para el muestreo de segmentos.
-            particle_type: Tipo de partícula (int).
-            h: Radio de suavizado para cada partícula.
+        Construye la geometría de frontera y genera la lista de partículas SPH,
+        junto con metadatos para el resumen.
 
         Returns:
-            List[dict]: lista de partículas con campos id, type, position, velocity, h.
+            dict: {"particles": [...], "spacing": float, "sections": [...], "holes": [...]}
         """
-        # 1) Configuración del trapecio
+        # Configuración del trapecio
         cfg = self.params["trapecio"].copy()
         if resolution is not None:
             cfg["resolution"] = resolution
 
-        # 2) Instanciar Quadrilateral con agujeros y líneas extra
+        # Instanciar Quadrilateral con agujeros y líneas extra
         quad = Quadrilateral(
             d1=cfg["d1"], d2=cfg["d2"], d3=cfg["d3"],
             a1=cfg["a1"], a2=cfg["a2"], a3=cfg["a3"],
@@ -40,8 +37,10 @@ class BoundaryBuilder:
             extra_lines=self.params.get("lineas_extra", [])
         )
 
-        # 3) Obtener segmentos y particionar en partículas
+        # Obtener segmentos
         segmentos = quad.segments()
+
+        # Generar partículas
         particleizer = BoundaryParticleizer()
         particles = particleizer.generate(
             segments=segmentos,
@@ -49,4 +48,12 @@ class BoundaryBuilder:
             h=h
         )
 
-        return particles
+        # Construir estructura de resumen
+        boundary_data = {
+            "particles": [(p["position"][0], p["position"][1]) for p in particles],
+            "spacing": cfg.get("espaciado", None),
+            "sections": quad.section_info(),  # método que debe devolver inicio/fin de cada sección
+            "holes": quad.hole_info()         # método que debe devolver inicio/fin/partículas eliminadas
+        }
+
+        return boundary_data

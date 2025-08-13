@@ -1,5 +1,3 @@
-# boundaries/particleizer.py
-
 from typing import List, Dict, Any, Tuple
 
 Point = Tuple[float, float]
@@ -7,7 +5,6 @@ Segment = List[Point]
 
 class BoundaryParticleizer:
     def __init__(self):
-        # Podrías parametrizar aquí settings globales si los necesitas
         pass
 
     def generate(self,
@@ -16,22 +13,20 @@ class BoundaryParticleizer:
                  h: float = 0.01) -> List[Dict[str, Any]]:
         """
         Convierte lista de segmentos (líneas de frontera) en partículas SPH.
-
-        Args:
-            segments: Cada segmento es una lista de puntos (x, y).
-            ptype: entero que identifica el tipo de partículas.
-            h: radio de suavizado.
-
-        Returns:
-            List[Dict]: cada dict contiene keys: id, type, position, velocity, h
+        Filtra automáticamente segmentos vacíos o puntos inválidos.
         """
         particles: List[Dict[str, Any]] = []
         seen: set[Tuple[float, float]] = set()
         id_counter = 0
 
         for seg in segments:
-            for x, y in seg:
-                key = (round(x, 8), round(y, 8))  # Precisión configurable
+            if seg is None or len(seg) == 0:
+                continue  # Ignorar segmentos vacíos
+            for pt in seg:
+                if pt is None or len(pt) != 2:
+                    continue  # Ignorar puntos inválidos
+                x, y = pt
+                key = (round(x, 8), round(y, 8))
                 if key in seen:
                     continue
                 seen.add(key)
@@ -45,4 +40,3 @@ class BoundaryParticleizer:
                 id_counter += 1
 
         return particles
-

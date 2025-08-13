@@ -1,3 +1,5 @@
+# initial_conditions/domains/utils.py
+
 import numpy as np
 
 def segmentar_lado(P1, P2, sc):
