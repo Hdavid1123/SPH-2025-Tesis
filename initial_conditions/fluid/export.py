@@ -4,6 +4,7 @@ from pathlib import Path
 from .builder import FluidBuilder
 from .particleizer import FluidParticleizer
 from .visualizer import visualize_fluid
+from .stats import save_stats
 
 def export_fluid_particles(output_filename: str = "fluid_particles.txt", visualize: bool = False):
     # 1. Construir puntos del fluido
@@ -15,8 +16,9 @@ def export_fluid_particles(output_filename: str = "fluid_particles.txt", visuali
     particles = particleizer.generate(points)
 
     # 3. Ruta de salida en outputs/
-    output_path = Path(__file__).resolve().parents[1] / "outputs" / output_filename
-    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_dir = Path(__file__).resolve().parents[1] / "outputs"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / output_filename
 
     # 4. Guardar como TXT (igual que boundaries/export.py)
     with open(output_path, "w", encoding="utf-8") as f:
@@ -29,6 +31,9 @@ def export_fluid_particles(output_filename: str = "fluid_particles.txt", visuali
 
     print(f"[✓] Archivo de fluido exportado en: {output_path}")
 
-    # 5. Visualizar si se solicita
+    # 5. Guardar estadísticas
+    save_stats(points, output_dir)
+
+    # 6. Visualizar si se solicita
     if visualize:
         visualize_fluid(points, show=True)

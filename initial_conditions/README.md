@@ -1,6 +1,12 @@
 # 🧊 Proyecto SPH: Condiciones Iniciales
 
-Este módulo forma parte de un proyecto SPH (Smoothed Particle Hydrodynamics) y permite generar, exportar y visualizar **condiciones iniciales** para la simulación. Actualmente, incluye funcionalidades para trabajar con **partículas de frontera**.
+Este módulo forma parte de un proyecto SPH (Smoothed Particle Hydrodynamics) y permite generar, exportar y visualizar **condiciones iniciales** para la simulación.  
+Actualmente, incluye funcionalidades para trabajar con:
+
+- **Partículas de frontera**.
+- **Partículas de fluido**.
+- **Exportación combinada** de ambos conjuntos.
+- **Cálculo de estadísticas** sobre la distribución de partículas.
 
 ---
 
@@ -8,127 +14,171 @@ Este módulo forma parte de un proyecto SPH (Smoothed Particle Hydrodynamics) y 
 
 ```
 initial_conditions/
-├── main.py                    # Punto de entrada principal
-├── boundaries/
-│   ├── builder.py             # Construye partículas a partir de geometrías
-│   ├── export.py              # Exporta las partículas a un archivo de texto
-│   ├── visualizer.py          # Visualiza partículas SPH
-├── outputs/                   # Carpeta donde se guardan archivos generados
+├── main.py                       # Punto de entrada principal
+├── boundaries/                   # Generación de partículas de frontera
+│   ├── builder.py
+│   ├── export.py
+│   ├── visualizer.py
+├── fluid/                        # Generación de partículas de fluido
+│   ├── builder.py                 # Construye nube de puntos a partir de parámetros
+│   ├── geometry.py                # Genera la malla base y recorta con el polígono
+│   ├── filter.py                  # Filtra solapamientos con la frontera
+├── outputs/                       # Carpeta donde se guardan archivos generados
 ├── parameters/
-│   ├── boundary_conditions.json  # Archivo con parámetros geométricos
+│   ├── boundary_conditions.json   # Parámetros geométricos de la frontera
+│   ├── fluid_region.json          # Parámetros de la región de fluido
 ```
 
 ---
 
 ## ▶️ Ejecución del sistema
 
-### Comando básico
+### Generar partículas de frontera
 
 ```bash
 python initial_conditions/main.py export_boundaries
 ```
 
-Este comando hace lo siguiente:
+- Genera partículas SPH de frontera a partir de `parameters/boundary_conditions.json`.
+- Guarda en `outputs/boundary_particles.txt`.
 
-- Genera partículas SPH a partir de la geometría definida en `parameters/boundary_conditions.json`.
-- Las guarda en el archivo por defecto `outputs/boundary_particles.txt`.
+### Generar partículas de fluido
+
+```bash
+python initial_conditions/main.py export_fluid
+```
+
+- Genera la nube de partículas de fluido usando `parameters/fluid_region.json`.
+- Filtra partículas que se solapan con la frontera.
+- Guarda en `outputs/fluid_particles.txt`.
+- Exporta **estadísticas** a `outputs/stats_fluid.txt`.
+
+### Generar todos los conjuntos y exportar en un solo archivo
+
+```bash
+python initial_conditions/main.py export_all --plot
+```
+
+- Construye partículas de frontera y fluido.
+- Filtra solapamientos.
+- Exporta todas las partículas combinadas en `outputs/all_particles.txt`.
+- Guarda estadísticas del fluido.
+- Si se usa `--plot`, abre la visualización.
 
 ---
 
 ## ⚙️ Argumentos disponibles
 
-Puedes personalizar el comportamiento con los siguientes flags:
+| Opción                | Tipo     | Descripción                                                                 |
+|-----------------------|----------|-----------------------------------------------------------------------------|
+| `export_boundaries`   | comando  | Exporta partículas de frontera.                                             |
+| `export_fluid`        | comando  | Exporta partículas de fluido.                                               |
+| `export_all`          | comando  | Exporta frontera + fluido en un solo archivo.                               |
+| `--output NOMBRE`     | opcional | Nombre del archivo de salida (por defecto en `outputs/`).                   |
+| `--plot`              | bandera  | Muestra visualización en `matplotlib`.                                      |
 
-| Opción               | Tipo     | Descripción                                                                 |
-|----------------------|----------|-----------------------------------------------------------------------------|
-| `export_boundaries`  | comando  | Exporta las partículas de frontera en un archivo `.txt`.                    |
-| `--output NOMBRE`    | opcional | Define el nombre del archivo de salida (dentro de `outputs/`).             |
-| `--plot`             | bandera  | Si se activa, se abre una visualización con `matplotlib`.                  |
-
-### 🧪 Ejemplos de uso
+Ejemplos:
 
 ```bash
-# Exportar con nombre personalizado
-python initial_conditions/main.py export_boundaries --output frontera.txt
+# Exportar fluido y visualizar
+python initial_conditions/main.py export_fluid --plot
 
-# Exportar y visualizar
-python initial_conditions/main.py export_boundaries --plot
-
-# Exportar con nombre personalizado y visualizar
-python initial_conditions/main.py export_boundaries --output pared.txt --plot
+# Exportar todo en un archivo llamado escena.txt
+python initial_conditions/main.py export_all --output escena.txt
 ```
 
 ---
 
-## 📄 Formato del archivo generado
+## 📄 Formato de los archivos generados
 
-El archivo de salida (`.txt`) contiene una tabla de partículas con las siguientes columnas:
+### Archivos de partículas (`.txt`)
 
-```txt
+```
 posx    posy    h       tipo
 0.1234  0.5678  0.01    1
 ...
 ```
 
-- `posx`, `posy`: coordenadas de la partícula.
+- `posx`, `posy`: coordenadas.
 - `h`: radio de suavizado.
-- `tipo`: tipo de partícula (por defecto, `1` para frontera).
+- `tipo`:  
+  - `1` → frontera  
+  - `2` → fluido
+
+### Archivo de estadísticas (`stats_fluid.txt`)
+
+Contiene el número de partículas por columna y por fila en la malla **después del recorte**:
+
+```
+Número de partículas por columna:
+ Col  Num
+   1    1
+   2    5
+   ...
+
+Número de partículas por fila:
+ Fil  Num
+   1   20
+   2   18
+   ...
+```
+
+---
+
+## 🧩 Comportamiento con polígonos no rectangulares
+
+Cuando `flag_N` está en `"True"` en `fluid_region.json`:
+
+1. **Se genera una malla rectangular completa** de `nx × ny` puntos, usando los límites mínimos y máximos (`min_x, max_x, min_y, max_y`) de los vértices dados.
+2. **No se recalcula el espaciado**: se conserva la estructura regular de la malla original.
+3. **Se recortan los puntos fuera del polígono** usando `matplotlib.path.Path.contains_points`.
+4. Como resultado:
+   - En las zonas centrales del polígono, las columnas y filas están completas.
+   - En las zonas inclinadas, hay menos partículas por columna/fila.
+   - Esto mantiene la **consistencia del espaciado** y evita distorsiones.
+
+Ejemplo de configuración (`parameters/fluid_region.json`):
+
+```json
+{
+  "nx": 20,
+  "ny": 20,
+  "flag_N": "True",
+  "espaciado": 0.02,
+  "vertices": {
+    "inf-izq": [-0.41, -0.14],
+    "inf-der": [-0.25, -0.14],
+    "sup-der": [-0.19, 0.14],
+    "sup-izq": [-0.47, 0.14]
+  }
+}
+```
 
 ---
 
 ## 🖼️ Visualización
 
-La visualización se realiza usando `matplotlib`. Las partículas se dibujan como puntos negros (`'ko'`) dentro de una caja de **dimensión fija entre `-0.5` y `0.5`** en ambos ejes (x, y), para mantener consistencia visual.
+- Se usa `matplotlib`.
+- Escala fija entre `-0.5` y `0.5` en ambos ejes.
+- Puntos de frontera → color negro (`ko`).  
+- Puntos de fluido → color azul (`bo`).
 
 ---
 
-## 📁 Parámetros de geometría
+## 📁 Parámetros
 
-Los datos geométricos y resolución están definidos en el archivo:
-
-```
-parameters/boundary_conditions.json
-```
-
-Ejemplo de contenido:
-
-```json
-{
-  "trapecio": {
-    "d1": 100,
-    "d2": 100,
-    "d3": 100,
-    "a1": -90,
-    "a2": 0,
-    "a3": 90,
-    "resolucion": 3
-  },
-  "agujeros": [...],
-  "lineas_extra": [...]
-}
-```
-
-La resolución **no se pasa manualmente**, sino que se lee directamente desde este archivo.
+- **Frontera** → `parameters/boundary_conditions.json`
+- **Fluido** → `parameters/fluid_region.json`
 
 ---
 
 ## ✅ Requisitos
 
-- Python ≥ 3.10
-- Paquetes: `matplotlib`
+- Python ≥ 3.10  
+- Paquetes: `matplotlib`, `numpy`
 
 Instalar con:
 
 ```bash
-pip install matplotlib
-```
-
----
-
-## 🗂️ Ubicación del archivo
-
-Este archivo `README.md` debe colocarse directamente en el directorio:
-
-```
-initial_conditions/README.md
+pip install matplotlib numpy
 ```

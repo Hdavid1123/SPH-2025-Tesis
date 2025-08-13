@@ -18,13 +18,34 @@ class FluidBuilder:
         """
         Genera la nube de puntos de la región fluida.
         Si se proporcionan border_points, elimina solapamientos con las partículas de frontera.
+        Además, imprime estadísticas para depuración.
         """
         # 1. Generar nube de puntos del fluido
         puntos = sample_fluid_region(self.config)
+        print(f"[DEBUG] Puntos iniciales generados: {puntos.shape[0]}")
+
+        # Guardar coordenadas únicas antes del filtrado
+        y_vals_before = np.unique(np.round(puntos[:, 1], 6))
+        x_vals_before = np.unique(np.round(puntos[:, 0], 6))
 
         # 2. Filtrar para evitar solapamiento con la frontera
         if border_points is not None and len(border_points) > 0:
             espaciado = self.config["espaciado"]
-            puntos = eliminar_solapamientos(puntos, border_points, espaciado / 2)
+            puntos_filtrados = eliminar_solapamientos(puntos, border_points, espaciado / 2)
+            print(f"[DEBUG] Puntos después del filtrado: {puntos_filtrados.shape[0]}")
+
+            # Detectar filas perdidas
+            y_vals_after = np.unique(np.round(puntos_filtrados[:, 1], 6))
+            filas_perdidas = set(y_vals_before) - set(y_vals_after)
+            if filas_perdidas:
+                print(f"[DEBUG] Filas eliminadas (y): {sorted(filas_perdidas)}")
+
+            # Detectar columnas perdidas
+            x_vals_after = np.unique(np.round(puntos_filtrados[:, 0], 6))
+            columnas_perdidas = set(x_vals_before) - set(x_vals_after)
+            if columnas_perdidas:
+                print(f"[DEBUG] Columnas eliminadas (x): {sorted(columnas_perdidas)}")
+
+            puntos = puntos_filtrados
 
         return puntos

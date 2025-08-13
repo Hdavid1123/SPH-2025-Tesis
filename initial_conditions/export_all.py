@@ -9,6 +9,7 @@ from boundaries.visualizer import visualize_boundary
 from fluid.builder import FluidBuilder
 from fluid.particleizer import FluidParticleizer
 from fluid.visualizer import visualize_fluid
+from fluid.stats import save_stats
 
 
 def export_all_particles(output_filename: str = "all_particles.txt", visualize: bool = False):
@@ -17,6 +18,10 @@ def export_all_particles(output_filename: str = "all_particles.txt", visualize: 
     filtrando el fluido para evitar solapamientos con las fronteras
     y graficando ambos en el mismo eje si visualize=True.
     """
+
+    # Directorio de salida
+    output_dir = Path(__file__).resolve().parent / "outputs"
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     # 1. Construir partículas de frontera
     boundary_builder = BoundaryBuilder()
@@ -33,11 +38,8 @@ def export_all_particles(output_filename: str = "all_particles.txt", visualize: 
     fluid_particleizer = FluidParticleizer()
     fluid_particles = fluid_particleizer.generate(points_fluid, ptype=0, h=0.01)
 
-    # 4. Ruta de salida
-    output_path = Path(__file__).resolve().parents[0] / "outputs" / output_filename
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-
-    # 5. Guardar todo en un solo archivo
+    # 4. Guardar todo en un solo archivo
+    output_path = output_dir / output_filename
     with open(output_path, "w", encoding="utf-8") as f:
         f.write("posx\tposy\th\ttype\n")
         for p in boundary_particles + fluid_particles:
@@ -47,6 +49,15 @@ def export_all_particles(output_filename: str = "all_particles.txt", visualize: 
             f.write(f"{x:.6f}\t{y:.6f}\t{h:.6f}\t{ptype}\n")
 
     print(f"[✓] Archivo combinado exportado en: {output_path}")
+
+    # 5. Guardar estadísticas de fluido
+    save_stats(points_fluid, output_dir)
+
+    stats_path = output_dir / "stats_fluid.txt"
+    if stats_path.exists():
+        print(f"[✓] Archivo de estadísticas creado en: {stats_path}")
+    else:
+        print(f"[✗] No se pudo crear el archivo de estadísticas en {stats_path}")
 
     # 6. Visualización conjunta
     if visualize:

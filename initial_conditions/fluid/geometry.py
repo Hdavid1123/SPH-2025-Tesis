@@ -1,3 +1,5 @@
+# initial_conditions/fluid/geometry.py
+
 import numpy as np
 from matplotlib.path import Path
 
@@ -27,4 +29,5 @@ def sample_fluid_region(config: dict) -> np.ndarray:
     puntos = np.vstack((xx.flatten(), yy.flatten())).T
 
     poligono = Path(vertices)
-    return puntos[poligono.contains_points(puntos)]
+    # Se añade un pequeño radio para evitar problemas de borde
+    return puntos[poligono.contains_points(puntos, radius=1e-12)]
