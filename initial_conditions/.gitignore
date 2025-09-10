@@ -1,6 +1,5 @@
 # Carpetas y archivos de salida
 outputs/
-parameters/
 
 # Caché de Python
 __pycache__/

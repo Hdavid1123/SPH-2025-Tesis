@@ -59,4 +59,3 @@ dependencies:
     - urllib3==2.4.0
     - watchdog==6.0.0
     - wheel==0.45.1
-prefix: /home/hvarkaed/anaconda3/envs/sph_geometry

@@ -1,0 +1,25 @@
+{
+  "trapecio": {
+    "d1": 100,
+    "d2": 100,
+    "d3": 100,
+    "a1": -90,
+    "a2": 0,
+    "a3": 90,
+    "resolucion": 3
+  },
+  "agujeros": [
+    {
+      "lado": "CD",
+      "tam": 10,
+      "offset": 0
+    }
+  ],
+  "lineas_extra": [
+    {
+      "vertice": "C",
+      "tam": 100,
+      "angulo": 0
+    }
+  ]
+}
