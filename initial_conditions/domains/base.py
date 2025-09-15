@@ -4,13 +4,23 @@ from typing import List, Tuple
 Point = Tuple[float, float]
 Segment = List[Point]
 
-class Domain2D(ABC):
+class BoundaryShape(ABC):
+    """Interfaz base para cualquier geometría 2D
+    representada por segmentos."""
+    
     @abstractmethod
     def segments(self) -> List[Segment]:
-        """Retorna lista de segmentos (lados, líneas extra, etc.)"""
+        """Retorna lista de segmentos
+        (lados, líneas extra, etc.)"""
+        
         pass
 
-    @abstractmethod
-    def vertices(self) -> List[Point]:
-        """Retorna vértices característicos del dominio"""
-        pass
+    def endpoints(self) -> List[Point]:
+        """Por defecto: todos los extremos
+        únicos de los segmentos"""
+        
+        extremos = []
+        for seg in self.segments():
+            extremos.append(seg[0])
+            extremos.append(seg[-1])
+        return list(dict.fromkeys(extremos))

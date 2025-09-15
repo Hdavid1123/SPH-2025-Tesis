@@ -1,25 +1,28 @@
 {
-  "trapecio": {
-    "d1": 100,
-    "d2": 100,
-    "d3": 100,
-    "a1": -90,
-    "a2": 0,
-    "a3": 90,
-    "resolucion": 3
-  },
-  "agujeros": [
+  "quadrilateros": [
     {
-      "lado": "CD",
-      "tam": 10,
-      "offset": 0
+      "d1": 100,
+      "d2": 100,
+      "d3": 100,
+      "a1": -90,
+      "a2": 0,
+      "a3": 90,
+      "resolution": 3,
+      "agujeros": [
+        {
+          "lado": "CD",
+          "tam": 10,
+          "offset": 0
+        }
+      ]
     }
   ],
-  "lineas_extra": [
+  "free_lines": [
     {
-      "vertice": "C",
-      "tam": 100,
-      "angulo": 0
+      "from": "C",
+      "length": 100,
+      "angle": 0,
+      "resolution": 3
     }
   ]
 }
