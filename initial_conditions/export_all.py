@@ -5,10 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from boundaries.builder import BoundaryBuilder
-from boundaries.visualizer import visualize_boundary
 from fluid.builder import FluidBuilder
 from fluid.particleizer import FluidParticleizer
-from fluid.visualizer import visualize_fluid
 from fluid.stats import save_stats
 
 
@@ -41,12 +39,13 @@ def export_all_particles(output_filename: str = "all_particles.txt", visualize: 
     # 4. Guardar todo en un solo archivo
     output_path = output_dir / output_filename
     with open(output_path, "w", encoding="utf-8") as f:
-        f.write("posx\tposy\th\ttype\n")
-        for p in boundary_particles + fluid_particles:
+        f.write("id\tposx\tposy\th\ttype\n")
+        all_particles = boundary_particles + fluid_particles
+        for i, p in enumerate(all_particles):
             x, y = p["position"]
             h = p["h"]
             ptype = p["type"]
-            f.write(f"{x:.6f}\t{y:.6f}\t{h:.6f}\t{ptype}\n")
+            f.write(f"{i}\t{x:.6f}\t{y:.6f}\t{h:.6f}\t{ptype}\n")
 
     print(f"[✓] Archivo combinado exportado en: {output_path}")
 
@@ -62,9 +61,18 @@ def export_all_particles(output_filename: str = "all_particles.txt", visualize: 
     # 6. Visualización conjunta
     if visualize:
         fig, ax = plt.subplots()
-        visualize_boundary(boundary_particles, ax=ax, show=False)
-        visualize_fluid(points_fluid, ax=ax, show=False)
+
+        # Frontera (negro)
+        bx, by = zip(*[p["position"] for p in boundary_particles])
+        ax.scatter(bx, by, s=6, color="black", label="Frontera")
+
+        # Fluido (azul)
+        fx, fy = zip(*[p["position"] for p in fluid_particles])
+        ax.scatter(fx, fy, s=6, color="blue", label="Fluido")
 
         ax.set_title("Partículas de frontera y fluido")
         ax.set_aspect('equal', 'box')
+        ax.legend()
         plt.show()
+
+    return boundary_particles, fluid_particles

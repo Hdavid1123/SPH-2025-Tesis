@@ -14,19 +14,33 @@ Actualmente, incluye funcionalidades para trabajar con:
 
 ```
 initial_conditions/
-├── main.py                       # Punto de entrada principal
 ├── boundaries/                   # Generación de partículas de frontera
 │   ├── builder.py
 │   ├── export.py
+│   ├── particleizer.py
 │   ├── visualizer.py
+├── domains/                      # Define las geometrías y espacio permitido
+│   ├── base.py
+│   ├── composite.py
+│   ├── quadrilateral.py
+│   ├── utils.py
 ├── fluid/                        # Generación de partículas de fluido
-│   ├── builder.py                 # Construye nube de puntos a partir de parámetros
-│   ├── geometry.py                # Genera la malla base y recorta con el polígono
-│   ├── filter.py                  # Filtra solapamientos con la frontera
-├── outputs/                       # Carpeta donde se guardan archivos generados
+│   ├── builder.py                # Construye nube de puntos a partir de parámetros
+│   ├── export.py
+│   ├── filter.py                 # Filtra solapamientos con la frontera
+│   ├── geometry.py               # Genera la malla base y recorta con el polígono
+│   ├── particleizer.py
+│   ├── stats.py
+│   ├── visualizer.py
+├── outputs/                      # Carpeta donde se guardan archivos generados
 ├── parameters/
-│   ├── boundary_conditions.json   # Parámetros geométricos de la frontera
-│   ├── fluid_region.json          # Parámetros de la región de fluido
+│   ├── boundary_conditions.json  # Parámetros geométricos de la frontera
+│   ├── fluid_region.json         # Parámetros de la región de fluido
+├── environment.yml
+├── export_all.py
+├── main.py                       # Punto de entrada principal
+├── README.md
+├── structure.txt
 ```
 
 ---
