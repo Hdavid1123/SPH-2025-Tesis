@@ -31,4 +31,4 @@ def plot_particles(filename: str):
 
 # Ejemplo de uso
 if __name__ == "__main__":
-    plot_particles("initial_conditions/outputs/interaccion_frontera.txt")
+    plot_particles("initial_conditions/outputs/problema_vasos_comunicantes.txt")
