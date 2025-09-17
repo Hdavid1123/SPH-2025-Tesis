@@ -71,7 +71,9 @@ def export_all_particles(output_filename: str = "all_particles.txt", visualize: 
         ax.scatter(fx, fy, s=6, color="blue", label="Fluido")
 
         ax.set_title("Partículas de frontera y fluido")
-        ax.set_aspect('equal', 'box')
+        ax.set_aspect("equal", adjustable="datalim")
+        ax.autoscale()
+
         ax.legend()
         plt.show()
 

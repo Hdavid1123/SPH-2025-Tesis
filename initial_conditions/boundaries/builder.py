@@ -35,7 +35,7 @@ class BoundaryBuilder:
                 longitudes.append(conn["length"])
 
         # escala global: todo se normaliza para que la longitud máxima = 1
-        sc_global = 1 / max(longitudes) if longitudes else 1.0
+        sc_global = 1 / sum(longitudes) if longitudes else 1.0
 
         # 1) Construcción de cuadriláteros
         comp = CompositeDomain(sc_base=sc_global)
@@ -78,6 +78,8 @@ class BoundaryBuilder:
                 name=fl.get("name"),
             )
 
+        comp.print_points()  # Imprime los puntos registrados para verificación
+        
         return comp
 
     def build(self,

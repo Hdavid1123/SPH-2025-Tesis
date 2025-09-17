@@ -99,3 +99,10 @@ class CompositeDomain(BoundaryShape):
             segs.extend(d.segments())
         segs.extend(self.connections)
         return segs
+    
+    def print_points(self):
+        """Imprime todos los puntos registrados (vértices y finales de líneas)."""
+        print("=== Puntos registrados en CompositeDomain ===")
+        for name, coords in self.named_points.items():
+            print(f"{name}: {coords}")
+        print("============================================")
