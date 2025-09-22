@@ -1,0 +1,26 @@
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+
+# --- C++ / Pybind11 build artifacts ---
+*.o
+*.so
+*.pyd
+/build/
+/dist/
+/*.egg-info
+
+# --- Output files ---
+initial_conditions/outputs/*.txt
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Virtual envs ---
+.venv/
+venv/
+.env/

@@ -9,7 +9,6 @@ from fluid.builder import FluidBuilder
 from fluid.particleizer import FluidParticleizer
 from fluid.stats import save_stats
 
-
 def export_all_particles(output_filename: str = "all_particles.txt", visualize: bool = False):
     """
     Exporta partículas de frontera y fluido a un mismo archivo .txt,

@@ -1,6 +1,0 @@
-# Carpetas y archivos de salida
-outputs/
-
-# Caché de Python
-__pycache__/
-*.pyc
