@@ -8,6 +8,11 @@ namespace py = pybind11;
 std::vector<Particle> inicializar_particulas(py::array_t<double> arr) {
     auto buf = arr.unchecked<2>();  // matriz 2D
     size_t n = buf.shape(0);
+    size_t m = buf.shape(1);
+
+    if (m < 8) {
+        throw std::runtime_error("El array debe tener al menos 8 columnas: id, posx, posy, velx, vely, mass, h, type");
+    }
 
     std::vector<Particle> particles;
     particles.reserve(n);
@@ -28,7 +33,7 @@ std::vector<Particle> inicializar_particulas(py::array_t<double> arr) {
         p.dinternalE = 0.0;
         p.type       = static_cast<int>(buf(i, 7));
 
-        particles.push_back(p);
+        particles.push_back(std::move(p));
     }
 
     return particles;
@@ -46,7 +51,7 @@ PYBIND11_MODULE(initial_conditions, m) {
         .def_readwrite("h", &Particle::h)
         .def_readwrite("pressure", &Particle::pressure)
         .def_readwrite("soundVel", &Particle::soundVel)
-        .def_readwrite("internalE", &Particle::internalE)
+        .def_readwrite("internalE", &Particle::internalE)   // corregido
         .def_readwrite("dinternalE", &Particle::dinternalE)
         .def_readwrite("neighbors", &Particle::neighbors)
         .def_readwrite("dx", &Particle::dx)

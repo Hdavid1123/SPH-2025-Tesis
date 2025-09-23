@@ -6,10 +6,12 @@ from .particleizer import BoundaryParticleizer
 
 PARAM_PATH = Path(__file__).parent.parent / "parameters" / "boundary_conditions.json"
 
+
 class BoundaryBuilder:
     def __init__(self, param_file: Path | str = PARAM_PATH):
         with open(param_file, "r", encoding="utf-8") as f:
             self.params = json.load(f)
+        self.sc_global = 1.0
 
     def build_geometry(self, resolution: int = None) -> CompositeDomain:
         """
@@ -17,7 +19,6 @@ class BoundaryBuilder:
         definidas en el archivo de parámetros, usando una escala global
         basada en todas las longitudes (cuadriláteros y líneas libres).
         """
-        # 0) Definición de la escala global
         longitudes = []
 
         # cuadriláteros
@@ -34,11 +35,11 @@ class BoundaryBuilder:
             if "length" in conn:
                 longitudes.append(conn["length"])
 
-        # escala global: todo se normaliza para que la longitud máxima = 1
-        sc_global = 1 / sum(longitudes) if longitudes else 1.0
+        # escala global: normaliza para que la suma de longitudes = 1
+        self.sc_global = 1 / sum(longitudes) if longitudes else 1.0
 
         # 1) Construcción de cuadriláteros
-        comp = CompositeDomain(sc_base=sc_global)
+        comp = CompositeDomain(sc_base=self.sc_global)
 
         for i, quad_cfg in enumerate(self.params.get("quadrilateros", [])):
             cfg = quad_cfg.copy()
@@ -51,7 +52,7 @@ class BoundaryBuilder:
                 resolution=cfg.get("resolution", 1),
                 holes=[{**h, "tam": h["tam"], "offset": h["offset"]}
                        for h in cfg.get("agujeros", [])],
-                sc_base=sc_global
+                sc_base=self.sc_global,
             )
             comp.add_domain(quad)
 
@@ -65,38 +66,64 @@ class BoundaryBuilder:
         for conn in self.params.get("connections", []):
             comp.add_connection(
                 conn["p1"], conn["p2"],
-                resolution=conn.get("resolution", 1)
+                resolution=conn.get("resolution"),
             )
 
         for fl in self.params.get("free_lines", []):
             comp.add_free_line(
                 from_point=fl["from"],
                 to_point=fl.get("to"),
-                length=fl.get("length", None) * sc_global if fl.get("length") else None,
+                length=fl.get("length", None) * self.sc_global if fl.get("length") else None,
                 angle=fl.get("angle"),
-                resolution=fl.get("resolution", 1),
+                resolution=fl.get("resolution"),
                 name=fl.get("name"),
             )
 
         comp.print_points()  # Imprime los puntos registrados para verificación
-        
         return comp
 
     def build(self,
               resolution: int = None,
               particle_type: int = 1,
-              h: float = 0.01) -> list[dict]:
+              h: float = None,
+              dx: float = None,
+              dy: float = None) -> list[dict]:
         """
         Construye la geometría de frontera y genera la lista de partículas SPH.
         """
         comp = self.build_geometry(resolution=resolution)
         segmentos = comp.segments()
+        rho0 = 1000.0  # Densidad típica del agua
+
+        # Si no se pasó resolution, tomarlo del JSON
+        if resolution is None:
+            if self.params.get("quadrilateros"):
+                resolution = self.params["quadrilateros"][0].get("resolution", 1)
+            elif self.params.get("free_lines"):
+                resolution = self.params["free_lines"][0].get("resolution", 1)
+            elif self.params.get("connections"):
+                resolution = self.params["connections"][0].get("resolution", 1)
+            else:
+                resolution = 1  # fallback seguro
+
+        # Ahora resolution siempre está definido
+        if dx is None:
+            dx = resolution * self.sc_global
+        if dy is None:
+            dy = dx
+        if h is None:
+            h = dx
+
+        mass = rho0 * dx * dy
 
         particleizer = BoundaryParticleizer()
         particles = particleizer.generate(
             segments=segmentos,
             ptype=particle_type,
-            h=h
+            h=h,
+            dx=dx,
+            dy=dy,
+            mass=mass,
         )
 
         return particles

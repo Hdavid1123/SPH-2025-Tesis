@@ -6,24 +6,29 @@ from .visualizer import visualize_boundary
 
 
 def export_boundary_particles(output_filename: str = "boundary_particles.txt", visualize: bool = False):
+    # 1. Construir partículas de frontera
     builder = BoundaryBuilder()
-    particles = builder.build()  # Usa el resolution que viene del JSON
+    particles = builder.build()  # resolution y escala vienen del JSON y builder
 
-    # Ruta de salida: dentro de outputs/
-    output_path = Path(__file__).resolve().parents[1] / "outputs" / output_filename
-    output_path.parent.mkdir(parents=True, exist_ok=True)  # Crea outputs/ si no existe
+    # 2. Ruta de salida: dentro de outputs/
+    output_dir = Path(__file__).resolve().parents[1] / "outputs"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / output_filename
 
-    # Escribir archivo de texto
+    # 3. Guardar archivo de texto con todos los campos relevantes
     with open(output_path, "w", encoding="utf-8") as f:
-        f.write("posx\tposy\th\ttype\n")
+        f.write("posx\tposy\th\ttype\tmass\tdx\tdy\n")
         for p in particles:
             x, y = p["position"]
             h = p["h"]
             ptype = p["type"]
-            f.write(f"{x:.6f}\t{y:.6f}\t{h:.6f}\t{ptype}\n")
+            mass = p["mass"]
+            dx = p["dx"]
+            dy = p["dy"]
+            f.write(f"{x:.6f}\t{y:.6f}\t{h:.6f}\t{ptype}\t{mass:.6f}\t{dx:.6f}\t{dy:.6f}\n")
 
-    print(f"[✓] Archivo exportado en: {output_path}")
+    print(f"[✓] Archivo de frontera exportado en: {output_path}")
 
-    # Visualizar si se solicita
+    # 4. Visualizar si se solicita
     if visualize:
         visualize_boundary(particles, show=True)

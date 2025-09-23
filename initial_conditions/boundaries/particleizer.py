@@ -13,7 +13,10 @@ class BoundaryParticleizer:
     def generate(self,
                  segments: List[Segment],
                  ptype: int = 1,
-                 h: float = 0.01) -> List[Dict[str, Any]]:
+                 h: float = 0.01,
+                 dx: float = 0.01,
+                 dy: float = 0.01,
+                 mass: float = 1.0) -> List[Dict[str, Any]]:
         """
         Convierte lista de segmentos (líneas de frontera) en partículas SPH.
 
@@ -21,9 +24,11 @@ class BoundaryParticleizer:
             segments: Cada segmento es una lista de puntos (x, y).
             ptype: entero que identifica el tipo de partículas.
             h: radio de suavizado.
+            dx, dy: espaciamientos de partículas.
+            mass: masa de cada partícula.
 
         Returns:
-            List[Dict]: cada dict contiene keys: id, type, position, velocity, h
+            List[Dict]: cada dict contiene keys: id, type, position, velocity, h, dx, dy, mass
         """
         particles: List[Dict[str, Any]] = []
         seen: set[Tuple[float, float]] = set()
@@ -40,9 +45,11 @@ class BoundaryParticleizer:
                     "type": ptype,
                     "position": [x, y],
                     "velocity": [0.0, 0.0],
-                    "h": h
+                    "h": h,
+                    "dx": dx,
+                    "dy": dy,
+                    "mass": mass
                 })
                 id_counter += 1
 
         return particles
-

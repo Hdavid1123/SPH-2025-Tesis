@@ -11,3 +11,5 @@ particles = simulacion.inicializar_particulas(data)
 
 print("Cantidad:", len(particles))
 print("Primera partícula:", particles[0].id, particles[0].pos, particles[0].h)
+print("Tipo de datos:", type(particles))
+print(particles[0])
