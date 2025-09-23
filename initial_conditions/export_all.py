@@ -5,10 +5,10 @@ from typing import List, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
 
-from boundaries.builder import BoundaryBuilder
-from fluid.builder import FluidBuilder
-from fluid.particleizer import FluidParticleizer
-from fluid.stats import save_stats
+from initial_conditions.boundaries.builder import BoundaryBuilder
+from initial_conditions.fluid.builder import FluidBuilder
+from initial_conditions.fluid.particleizer import FluidParticleizer
+from initial_conditions.fluid.stats import save_stats
 
 OUTPUT_DIR_DEFAULT = Path(__file__).resolve().parent / "outputs"
 
@@ -162,12 +162,3 @@ def export_all_particles(output_filename: str = "all_particles.txt",
         visualize_particles(boundary_particles, fluid_particles)
 
     return all_particles, data_for_cpp
-
-
-# ----------------------------
-# Ejemplo rápido de uso
-# ----------------------------
-if __name__ == "__main__":
-    all_particles, data = export_all_particles(visualize=False)
-    print("Total partículas:", len(all_particles))
-    print("Array shape:", data.shape)

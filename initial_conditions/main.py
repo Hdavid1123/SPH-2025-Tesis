@@ -9,9 +9,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[0]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 # Importar funciones disponibles
-from boundaries.export import export_boundary_particles
-from fluid.export import export_fluid_particles
-from export_all import export_all_particles
+from initial_conditions.boundaries.export import export_boundary_particles
+from initial_conditions.fluid.export import export_fluid_particles
+from initial_conditions.export_all import export_all_particles
 
 
 def main():

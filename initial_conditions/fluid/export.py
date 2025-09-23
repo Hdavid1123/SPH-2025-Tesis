@@ -1,10 +1,10 @@
 # initial_conditions/fluid/export.py
 
 from pathlib import Path
-from .builder import FluidBuilder
-from .particleizer import FluidParticleizer
-from .visualizer import visualize_fluid
-from .stats import save_stats
+from initial_conditions.fluid.builder import FluidBuilder
+from initial_conditions.fluid.particleizer import FluidParticleizer
+from initial_conditions.fluid.visualizer import visualize_fluid
+from initial_conditions.fluid.stats import save_stats
 
 def export_fluid_particles(output_filename: str = "fluid_particles.txt", visualize: bool = False):
     # 1. Construir puntos del fluido

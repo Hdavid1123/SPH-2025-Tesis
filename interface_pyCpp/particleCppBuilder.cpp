@@ -5,13 +5,28 @@
 
 namespace py = pybind11;
 
+/**
+ * Convierte un numpy.ndarray (N,8) en un std::vector<Particle>.
+ *
+ * Columnas esperadas:
+ *   0: id
+ *   1: posx
+ *   2: posy
+ *   3: h
+ *   4: type
+ *   5: mass
+ *   6: dx
+ *   7: dy
+ */
 std::vector<Particle> inicializar_particulas(py::array_t<double> arr) {
-    auto buf = arr.unchecked<2>();  // matriz 2D
+    auto buf = arr.unchecked<2>();  
     size_t n = buf.shape(0);
     size_t m = buf.shape(1);
 
     if (m < 8) {
-        throw std::runtime_error("El array debe tener al menos 8 columnas: id, posx, posy, velx, vely, mass, h, type");
+        throw std::runtime_error(
+            "El array debe tener 8 columnas: id, posx, posy, h, type, mass, dx, dy"
+        );
     }
 
     std::vector<Particle> particles;
@@ -20,18 +35,31 @@ std::vector<Particle> inicializar_particulas(py::array_t<double> arr) {
     for (size_t i = 0; i < n; i++) {
         Particle p;
 
-        p.id         = static_cast<int>(buf(i, 0));
-        p.pos        = {buf(i, 1), buf(i, 2)};
-        p.vel        = {buf(i, 3), buf(i, 4)};
-        p.accel      = {0.0, 0.0};   // inicialización por defecto
-        p.mass       = buf(i, 5);
+        p.id   = static_cast<int>(buf(i, 0));
+        p.pos  = {buf(i, 1), buf(i, 2)};
+        p.h    = buf(i, 3);
+        p.type = static_cast<int>(buf(i, 4));
+        p.mass = buf(i, 5);
+
+        // Guardamos dx y dy en sus vectores (aunque por ahora tengan un solo valor)
+        p.dx.push_back(buf(i, 6));
+        p.dy.push_back(buf(i, 7));
+
+        // Inicializaciones por defecto
+        p.vel        = {0.0, 0.0};
+        p.accel      = {0.0, 0.0};
         p.rho        = 0.0;
-        p.h          = buf(i, 6);
         p.pressure   = 0.0;
         p.soundVel   = 0.0;
         p.internalE  = 0.0;
         p.dinternalE = 0.0;
-        p.type       = static_cast<int>(buf(i, 7));
+
+        // Vecinos y otros vectores vacíos
+        p.neighbors.clear();
+        p.r.clear();
+        p.W.clear();
+        p.dWx.clear();
+        p.dWy.clear();
 
         particles.push_back(std::move(p));
     }
@@ -39,7 +67,7 @@ std::vector<Particle> inicializar_particulas(py::array_t<double> arr) {
     return particles;
 }
 
-PYBIND11_MODULE(initial_conditions, m) {
+PYBIND11_MODULE(initial_particles_builder, m) {
     py::class_<Particle>(m, "Particle")
         .def(py::init<>())
         .def_readwrite("id", &Particle::id)
@@ -51,7 +79,7 @@ PYBIND11_MODULE(initial_conditions, m) {
         .def_readwrite("h", &Particle::h)
         .def_readwrite("pressure", &Particle::pressure)
         .def_readwrite("soundVel", &Particle::soundVel)
-        .def_readwrite("internalE", &Particle::internalE)   // corregido
+        .def_readwrite("internalE", &Particle::internalE)
         .def_readwrite("dinternalE", &Particle::dinternalE)
         .def_readwrite("neighbors", &Particle::neighbors)
         .def_readwrite("dx", &Particle::dx)

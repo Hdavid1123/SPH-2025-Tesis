@@ -1,8 +1,8 @@
 # initial_conditions/boundaries/export.py
 
 from pathlib import Path
-from .builder import BoundaryBuilder
-from .visualizer import visualize_boundary
+from initial_conditions.boundaries.builder import BoundaryBuilder
+from initial_conditions.boundaries.visualizer import visualize_boundary
 
 
 def export_boundary_particles(output_filename: str = "boundary_particles.txt", visualize: bool = False):

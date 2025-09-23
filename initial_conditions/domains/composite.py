@@ -1,6 +1,6 @@
 import numpy as np
 from typing import List, Optional
-from .base import Point, Segment, BoundaryShape
+from initial_conditions.domains.base import Point, Segment, BoundaryShape
 
 
 class CompositeDomain(BoundaryShape):

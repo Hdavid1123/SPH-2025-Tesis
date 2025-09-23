@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from fluid.builder import FluidBuilder
+from initial_conditions.fluid.builder import FluidBuilder
 
 def visualize_fluid(points: np.ndarray,
                     ax: plt.Axes = None,

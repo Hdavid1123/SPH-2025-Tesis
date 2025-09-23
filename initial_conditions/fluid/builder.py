@@ -3,8 +3,8 @@
 import json
 from pathlib import Path
 import numpy as np
-from fluid.geometry import sample_fluid_region
-from fluid.filter import eliminar_solapamientos
+from initial_conditions.fluid.geometry import sample_fluid_region
+from initial_conditions.fluid.filter import eliminar_solapamientos
 
 PARAM_PATH = Path(__file__).resolve().parent.parent / "parameters" / "fluid_region.json"
 

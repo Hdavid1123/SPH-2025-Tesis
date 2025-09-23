@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
-from domains.quadrilateral import Quadrilateral
-from domains.composite import CompositeDomain
-from .particleizer import BoundaryParticleizer
+from initial_conditions.domains.quadrilateral import Quadrilateral
+from initial_conditions.domains.composite import CompositeDomain
+from initial_conditions.boundaries.particleizer import BoundaryParticleizer
 
 PARAM_PATH = Path(__file__).parent.parent / "parameters" / "boundary_conditions.json"
 

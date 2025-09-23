@@ -1,7 +1,7 @@
 import numpy as np
 from typing import List
-from .base import BoundaryShape, Point, Segment
-from .utils import construir_trapecio, agregar_agujero
+from initial_conditions.domains.base import BoundaryShape, Point, Segment
+from initial_conditions.domains.utils import construir_trapecio, agregar_agujero
 
 class Quadrilateral(BoundaryShape):
     def __init__(self,
