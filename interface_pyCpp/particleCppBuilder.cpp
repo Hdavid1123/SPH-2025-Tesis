@@ -48,10 +48,10 @@ std::vector<Particle> inicializar_particulas(py::array_t<double> arr) {
         // Inicializaciones por defecto
         p.vel        = {0.0, 0.0};
         p.accel      = {0.0, 0.0};
-        p.rho        = 0.0;
+        p.rho        = 1000.0;
         p.pressure   = 0.0;
         p.soundVel   = 0.0;
-        p.internalE  = 0.0;
+        p.internalE  = 357.1;
         p.dinternalE = 0.0;
 
         // Vecinos y otros vectores vacíos
