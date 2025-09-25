@@ -1,7 +1,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
-#include "Particle.h"
+#include "data_structures/particle.h"
 
 namespace py = pybind11;
 

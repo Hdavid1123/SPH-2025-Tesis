@@ -2,6 +2,11 @@
 
 namespace kernels {
 
+using data_structures::Dimension;
+using data_structures::ONE_D;
+using data_structures::TWO_D;
+using data_structures::THREE_D;
+
 double cubicSplineKernel(double r, double h, Dimension dim) {
     if (r < 0 || h <= 0) throw std::runtime_error("r>=0 and h>0 required");
 

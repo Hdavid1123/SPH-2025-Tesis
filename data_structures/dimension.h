@@ -1,7 +1,7 @@
 #pragma once
 #include <stdexcept>
 
-namespace kernels {
+namespace data_structures {
 
 // Dimensiones soportadas en todos los kernels SPH
 enum Dimension {

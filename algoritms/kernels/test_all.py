@@ -4,7 +4,7 @@ import pytest
 # Importa los módulos compilados
 from algoritms.kernels.cubic_spline import cubicSplineKernel, dCubicSplineKernel
 from algoritms.kernels.wendland import wendlandKernel
-from algoritms.kernels.common import Dimension
+from data_structures import Dimension
 
 # -----------------------
 # Tests para cubic spline

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from algoritms.kernels.cubic_spline import cubicSplineKernel, dCubicSplineKernel
 from algoritms.kernels.wendland import wendlandKernel
-from algoritms.kernels.common import Dimension
+from data_structures import Dimension
 
 def plot_cubic_spline(h=1.0):
     r_values = np.linspace(-2.5 * h, 2.5 * h, 200)
