@@ -1,8 +1,13 @@
 #pragma once
 #include <vector>
-#include "interface_pyCpp/Particle.h"
-#include "Cell.h"
+#include "particle.h"
+#include "cell.h"
 
+// Construye la malla de celdas
+std::vector<Cell> buildGrid(double xmin, double xmax,
+                            double ymin, double ymax,
+                            double h);
+                            
 // Asigna partículas a celdas
 void assignParticlesToCells(std::vector<Cell>& cells,
                             std::vector<Particle>& particles,

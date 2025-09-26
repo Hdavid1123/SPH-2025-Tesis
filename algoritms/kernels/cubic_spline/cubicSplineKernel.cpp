@@ -54,4 +54,4 @@ std::array<double,2> dCubicSplineKernel(double r, double dx, double dy, double h
     return {dWx, dWy};
 }
 
-} // namespace SPH
+} // namespace kernels

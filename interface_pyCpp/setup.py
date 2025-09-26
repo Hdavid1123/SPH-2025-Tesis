@@ -2,16 +2,21 @@ from setuptools import setup, Extension
 import pybind11
 from pathlib import Path
 
+project_root = Path(__file__).resolve().parent.parent
+
 ext_modules = [
     Extension(
-        "initial_particles_builder",  # nombre del módulo importable en Python
-        [str(Path("particleCppBuilder.cpp"))],
+        "initial_particles_builder",
+        sources=[
+            str(Path("particleCppBuilder.cpp")),  # <-- único archivo C++ en esta carpeta
+        ],
         include_dirs=[
             pybind11.get_include(),
-            str(Path("."))  # Para que encuentre Particle.h si está en el mismo dir
+            pybind11.get_include(user=True),
+            str(project_root / "data_structures"),  # para particle.h, cell.h, etc.
         ],
         language="c++",
-        extra_compile_args=["-std=c++17"],  # o -std=c++14 según tu compilador
+        extra_compile_args=["-std=c++17"],
     ),
 ]
 

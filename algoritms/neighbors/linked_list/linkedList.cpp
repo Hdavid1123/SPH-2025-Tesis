@@ -2,6 +2,50 @@
 #include <cmath>
 #include "kernels/cubic_spline/cubicSplineKernel.h"
 
+std::vector<Cell> buildGrid(double xmin, double xmax,
+                            double ymin, double ymax,
+                            double h) {
+    int nx = static_cast<int>((xmax - xmin) / h) + 1;
+    int ny = static_cast<int>((ymax - ymin) / h) + 1;
+
+    std::vector<Cell> cells;
+    cells.reserve(nx * ny);
+
+    // Crear celdas
+    for (int i = 0; i < nx; i++) {
+        for (int j = 0; j < ny; j++) {
+            double cx = xmin + (i + 0.5) * h;
+            double cy = ymin + (j + 0.5) * h;
+
+            Cell cell;
+            cell.center = {cx, cy};
+            cell.id = i * ny + j;
+            cells.push_back(cell);
+        }
+    }
+
+    // Definir vecinos de cada celda
+    for (int i = 0; i < nx; i++) {
+        for (int j = 0; j < ny; j++) {
+            int id = i * ny + j;
+            for (int di = -1; di <= 1; di++) {
+                for (int dj = -1; dj <= 1; dj++) {
+                    int ni = i + di;
+                    int nj = j + dj;
+                    if (ni >= 0 && ni < nx && nj >= 0 && nj < ny) {
+                        int nid = ni * ny + nj;
+                        if (nid != id) {
+                            cells[id].neighborCells.push_back(nid);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return cells;
+}
+
 void assignParticlesToCells(std::vector<Cell>& cells,
                             std::vector<Particle>& particles,
                             double h) {
@@ -47,8 +91,8 @@ void findNeighbors(std::vector<Cell>& cells,
                         pi.dy.push_back(dy);
                         pi.r.push_back(r);
 
-                        double Wval = cubicSplineKernel(r, h_ij, kernels::TWO_D);
-                        auto dWval = dCubicSplineKernel(r, dx, dy, h_ij);
+                        double Wval = kernels::cubicSplineKernel(r, h_ij, data_structures::TWO_D);
+                        auto dWval = kernels::dCubicSplineKernel(r, dx, dy, h_ij);
 
                         pi.W.push_back(Wval);
                         pi.dWx.push_back(dWval[0]);

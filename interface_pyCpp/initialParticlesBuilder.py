@@ -6,7 +6,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-import initial_particles_builder as ipb
+from . import initial_particles_builder as ipb
 from initial_conditions.export_all import export_all_particles
 
 def build_particles_from_export(plot: bool = False):

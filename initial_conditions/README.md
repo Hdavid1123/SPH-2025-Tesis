@@ -38,7 +38,7 @@ initial_conditions/
 │   ├── fluid_region.json         # Parámetros de la región de fluido
 ├── environment.yml
 ├── export_all.py
-├── main.py                       # Punto de entrada principal
+├── ic_main.py                       # Punto de entrada principal
 ├── README.md
 ├── structure.txt
 ```
@@ -50,7 +50,7 @@ initial_conditions/
 ### Generar partículas de frontera
 
 ```bash
-python initial_conditions/main.py export_boundaries
+python initial_conditions/ic_main.py export_boundaries
 ```
 
 - Genera partículas SPH de frontera a partir de `parameters/boundary_conditions.json`.
@@ -59,7 +59,7 @@ python initial_conditions/main.py export_boundaries
 ### Generar partículas de fluido
 
 ```bash
-python initial_conditions/main.py export_fluid
+python initial_conditions/ic_main.py export_fluid
 ```
 
 - Genera la nube de partículas de fluido usando `parameters/fluid_region.json`.
@@ -70,7 +70,7 @@ python initial_conditions/main.py export_fluid
 ### Generar todos los conjuntos y exportar en un solo archivo
 
 ```bash
-python initial_conditions/main.py export_all --plot
+python initial_conditions/ic_main.py export_all --plot
 ```
 
 - Construye partículas de frontera y fluido.
@@ -95,10 +95,10 @@ Ejemplos:
 
 ```bash
 # Exportar fluido y visualizar
-python initial_conditions/main.py export_fluid --plot
+python initial_conditions/ic_main.py export_fluid --plot
 
 # Exportar todo en un archivo llamado escena.txt
-python initial_conditions/main.py export_all --output escena.txt
+python initial_conditions/ic_main.py export_all --output escena.txt
 ```
 
 ---
